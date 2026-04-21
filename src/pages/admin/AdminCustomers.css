@@ -1,0 +1,107 @@
+.admin-customers {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-customer-count {
+  color: var(--text-muted);
+  font-size: 1rem;
+  background: linear-gradient(135deg, var(--pink-accent) 0%, #ffd4d0 100%);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-weight: 500;
+}
+
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.customer-avatar {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, var(--pink-accent) 0%, #ffd4d0 100%);
+  color: var(--brown-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 3px 10px rgba(255, 228, 225, 0.5);
+}
+
+.customer-name {
+  font-weight: 600;
+  color: var(--brown-primary);
+}
+
+.customer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.customer-contact span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.customer-contact svg {
+  color: var(--brown-secondary);
+}
+
+.customer-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  max-width: 200px;
+  font-size: 0.85rem;
+  color: var(--text-dark);
+}
+
+.customer-address svg {
+  color: var(--brown-secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.customer-spent {
+  font-weight: 700;
+  color: var(--brown-primary);
+  background: linear-gradient(135deg, var(--pink-accent) 0%, #ffd4d0 100%);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+}
+
+@media (max-width: 992px) {
+  .admin-table th:nth-child(3),
+  .admin-table td:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-filters {
+    flex-direction: column;
+  }
+  
+  .admin-search-box {
+    max-width: 100%;
+  }
+  
+  .admin-table th:nth-child(4),
+  .admin-table td:nth-child(4),
+  .admin-table th:nth-child(6),
+  .admin-table td:nth-child(6) {
+    display: none;
+  }
+}
