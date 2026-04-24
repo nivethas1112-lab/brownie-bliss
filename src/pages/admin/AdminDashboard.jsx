@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Package, ShoppingCart, Users, DollarSign, TrendingUp, ArrowUpRight } from 'lucide-react'
 import './AdminDashboard.css'
 
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalProducts: 24,
