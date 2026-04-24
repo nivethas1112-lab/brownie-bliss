@@ -264,6 +264,12 @@
   }
 }
 
+@media (max-width: 992px) {
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+}
+
 /* Tablet */
 @media (max-width: 992px) {
   .navbar {
@@ -279,11 +285,24 @@
   }
   
   .mobile-menu-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .brand-name {
     font-size: 1.5rem;
+  }
+  
+  .mobile-menu {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 }
 

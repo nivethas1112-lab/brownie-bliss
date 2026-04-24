@@ -5,8 +5,8 @@ import { X, ShoppingBag, Trash2, Plus, Minus } from 'lucide-react'
 const CartModal = ({ isOpen, onClose }) => {
   // Mock data for demonstration
   const cartItems = [
-    { id: 1, name: 'Double Choco Brownie', price: 4.99, quantity: 2, img: 'https://images.unsplash.com/photo-1543255006-d6395b6f1171?q=80&w=200' },
-    { id: 2, name: 'Red Velvet Bliss', price: 5.50, quantity: 1, img: 'https://images.unsplash.com/photo-1586788680434-30d324671b1c?q=80&w=200' },
+    { id: 1, name: 'Double Choco Brownie', price: 4.99, quantity: 2, img: 'public/assets1/Deep-Dish-Fudge-Brownies-For-Two-In-Ramekins-photo-2816b-720x405.jpg' },
+    { id: 2, name: 'Red Velvet Bliss', price: 5.50, quantity: 1, img: 'public/assets1/redvelvetcake123aws-1-of-1.jpg' },
   ]
 
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)

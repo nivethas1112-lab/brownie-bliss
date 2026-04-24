@@ -76,7 +76,7 @@ const AdminDashboard = () => {
               View All <ArrowUpRight size={16} />
             </Link>
           </div>
-          <div className="admin-table-container">
+          <div className="admin-table-wrapper">
             <table className="admin-table">
               <thead>
                 <tr>
@@ -108,15 +108,17 @@ const AdminDashboard = () => {
 
         <div className="admin-quick-stats">
           <h2>Sales Overview</h2>
-          <div className="admin-chart-placeholder">
-            <div className="admin-chart-bars">
-              <div className="chart-bar" style={{ height: '60%' }}><span>Mon</span></div>
-              <div className="chart-bar" style={{ height: '80%' }}><span>Tue</span></div>
-              <div className="chart-bar" style={{ height: '45%' }}><span>Wed</span></div>
-              <div className="chart-bar" style={{ height: '90%' }}><span>Thu</span></div>
-              <div className="chart-bar" style={{ height: '70%' }}><span>Fri</span></div>
-              <div className="chart-bar" style={{ height: '95%' }}><span>Sat</span></div>
-              <div className="chart-bar" style={{ height: '50%' }}><span>Sun</span></div>
+          <div className="admin-chart-wrapper">
+            <div className="admin-chart-placeholder">
+              <div className="admin-chart-bars">
+                <div className="chart-bar" style={{ height: '60%' }}><span>Mon</span></div>
+                <div className="chart-bar" style={{ height: '80%' }}><span>Tue</span></div>
+                <div className="chart-bar" style={{ height: '45%' }}><span>Wed</span></div>
+                <div className="chart-bar" style={{ height: '90%' }}><span>Thu</span></div>
+                <div className="chart-bar" style={{ height: '70%' }}><span>Fri</span></div>
+                <div className="chart-bar" style={{ height: '95%' }}><span>Sat</span></div>
+                <div className="chart-bar" style={{ height: '50%' }}><span>Sun</span></div>
+              </div>
             </div>
           </div>
           <div className="admin-weekly-summary">

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, ChevronLeft } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, ChevronLeft, ShoppingBag, Menu, X } from 'lucide-react'
 import './AdminLayout.css'
 
 const AdminLayout = () => {
@@ -17,14 +17,29 @@ const AdminLayout = () => {
     { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
     { path: '/admin/products', icon: Package, label: 'Products' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
+    { path: '/admin/cart', icon: ShoppingBag, label: 'Cart' },
     { path: '/admin/customers', icon: Users, label: 'Customers' },
   ]
 
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
+
+  const closeSidebar = () => {
+    setSidebarOpen(false)
+  }
+
   return (
     <div className="admin-layout">
-      <aside className="admin-sidebar">
+      <button className="admin-menu-toggle" onClick={toggleSidebar}>
+        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      <aside className={`admin-sidebar ${sidebarOpen ? 'admin-sidebar-open' : ''}`}>
         <div className="admin-logo">
-          <Link to="/admin">
+          <Link to="/admin" onClick={closeSidebar}>
             <img src="/assets/3-brownie-stack-falling-playful-600nw-2723000925-removebg-preview.png" alt="Brownie Bliss" />
             <span>Brownie Bliss</span>
           </Link>
@@ -36,6 +51,7 @@ const AdminLayout = () => {
               key={item.path}
               to={item.path}
               className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
+              onClick={closeSidebar}
             >
               <item.icon size={20} />
               <span>{item.label}</span>
