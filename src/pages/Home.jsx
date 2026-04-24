@@ -18,19 +18,19 @@ const Home = ({ onAddToCart }) => {
   }
 
   const testimonials = [
-    { 
+    {
       text: "The fudgiest brownies I've ever had! The gift box was perfectly packed and made for an amazing birthday surprise.",
       user: "Sarah Collins",
       title: "Verified Lover of Chocolate",
       img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150"
     },
-    { 
+    {
       text: "The Red Velvet cakes are out of this world. Soft, moist, and just the right amount of sweetness. Highly recommend!",
       user: "Mark Robinson",
       title: "Cake Enthusiast",
       img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150"
     },
-    { 
+    {
       text: "Ordered a bunch of tubs for my party and everyone was obsessed. The Belgian chocolate quality is unmistakable.",
       user: "Emma Johnson",
       title: "Party Planner",
@@ -51,7 +51,7 @@ const Home = ({ onAddToCart }) => {
     const tInterval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length)
     }, 3000)
-    
+
     const fInterval = setInterval(() => {
       setFeaturedIndex((prev) => (prev + 1) % (featured.length - 2))
     }, 4000)
@@ -68,7 +68,7 @@ const Home = ({ onAddToCart }) => {
     { name: 'Tubs', img: '/assets1/TiramisuDessertTub.webp' },
     { name: 'Jar Cakes', img: '/assets1/p-red-velvet-jar-cake-150gm-272450-m.avif' },
     { name: 'Cookies', img: '/assets1/Cookie-Monster-Cookies.jpg' },
-    { name: 'Cupcakes', img: '/assets1/SOP_Cupcake_web-LG-e1770142023962-2-1200x901.jpg'},
+    { name: 'Cupcakes', img: '/assets1/SOP_Cupcake_web-LG-e1770142023962-2-1200x901.jpg' },
     { name: 'Dream Cakes', img: '/assets1/chocolate-tub-cake.jpg' },
     { name: 'Vegans', img: '/assets1/64b95a4329858e4bbafc5e84_IMG_3043.jpg' },
     { name: 'Roll Cakes', img: '/assets1/fresh-mango-cake-roll-with-whipped-cream-1-735x735.jpg' },
@@ -81,7 +81,7 @@ const Home = ({ onAddToCart }) => {
       {/* Hero Section */}
       <section className="hero">
         <div className="container hero-container">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
@@ -92,7 +92,7 @@ const Home = ({ onAddToCart }) => {
             <p className="hero-desc">Discover the richest, fudgiest brownies and desserts handcrafted with love and the finest chocolate.</p>
             <button className="btn-primary">Explore Menu <ArrowRight size={20} /></button>
           </motion.div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
@@ -113,7 +113,7 @@ const Home = ({ onAddToCart }) => {
               <p className="section-subtitle">Our most loved treats this week</p>
             </div>
           </Reveal>
-          
+
           <div className="product-grid">
             {featured.map((item) => (
               <div key={item.id} className="product-card" onClick={() => openModal(item)} style={{ cursor: 'pointer' }}>
@@ -170,10 +170,10 @@ const Home = ({ onAddToCart }) => {
               <p className="section-subtitle">What our happy customers say</p>
             </div>
           </Reveal>
-          
+
           <div className="testimonial-carousel">
             <AnimatePresence mode="wait">
-              <motion.div 
+              <motion.div
                 key={activeTestimonial}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -194,11 +194,11 @@ const Home = ({ onAddToCart }) => {
                 </div>
               </motion.div>
             </AnimatePresence>
-            
+
             <div className="carousel-dots">
               {testimonials.map((_, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`dot ${activeTestimonial === i ? 'active' : ''}`}
                   onClick={() => setActiveTestimonial(i)}
                 ></div>
@@ -229,10 +229,10 @@ const Home = ({ onAddToCart }) => {
         </div>
       </section>
 
-      <ProductModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        product={selectedProduct} 
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
         onAddToCart={onAddToCart}
       />
     </div>

@@ -118,7 +118,7 @@ const CategoryPage = ({ onAddToCart }) => {
       <header className="category-header">
         <div className="container">
           <Reveal>
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               className="capitalize"
@@ -156,10 +156,10 @@ const CategoryPage = ({ onAddToCart }) => {
         </div>
       </section>
 
-      <ProductModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        product={selectedProduct} 
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
         onAddToCart={onAddToCart}
       />
     </div>
