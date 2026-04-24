@@ -73,7 +73,7 @@ const AdminOrders = () => {
         </select>
       </div>
 
-      <div className="admin-table-wrapper">
+      <div className="admin-table-container">
         <table className="admin-table">
           <thead>
             <tr>

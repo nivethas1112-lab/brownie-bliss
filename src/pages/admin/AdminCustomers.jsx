@@ -40,7 +40,7 @@ const AdminCustomers = () => {
         </div>
       </div>
 
-      <div className="admin-table-wrapper">
+      <div className="admin-table-container">
         <table className="admin-table">
           <thead>
             <tr>
