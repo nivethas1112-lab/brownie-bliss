@@ -10,6 +10,7 @@ import './AdminLayout.css'
 const AdminLayout = () => {
   const location = useLocation()
   const adminName = localStorage.getItem('adminName') || 'Admin'
+  const adminAvatar = localStorage.getItem('adminAvatar') || '/assets/3-brownie-stack-falling-playful-600nw-2723000925-removebg-preview.png'
   
   const [openDropdowns, setOpenDropdowns] = useState({
     catalogs: true,
@@ -26,6 +27,7 @@ const AdminLayout = () => {
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
     localStorage.removeItem('adminName')
+    localStorage.removeItem('adminAvatar')
     window.location.href = '/admin/login'
   }
 
@@ -116,7 +118,7 @@ const AdminLayout = () => {
                   className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
                 >
                   <div className="admin-nav-item-content">
-                    <item.icon size={20} />
+                     <item.icon size={20} />
                     <span>{item.label}</span>
                   </div>
                 </Link>
@@ -126,15 +128,18 @@ const AdminLayout = () => {
         </div>
 
         <div className="admin-sidebar-footer">
-          <div className="admin-user">
-            <div className="admin-user-avatar">
-              {adminName.charAt(0).toUpperCase()}
+          <Link to="/admin/profile" className="admin-user" style={{ textDecoration: 'none' }}>
+            <div 
+              className="admin-user-avatar"
+              style={adminAvatar ? { backgroundImage: `url("${adminAvatar}")`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', color: 'transparent', backgroundColor: 'var(--pink-accent)' } : {}}
+            >
+              {!adminAvatar && adminName.charAt(0).toUpperCase()}
             </div>
             <div className="admin-user-info">
-              <span className="admin-user-name">{adminName}</span>
-              <span className="admin-user-role">Administrator</span>
+              <span className="admin-user-name" style={{ color: 'white' }}>{adminName}</span>
+              <span className="admin-user-role" style={{ color: 'rgba(255,255,255,0.7)' }}>Administrator</span>
             </div>
-          </div>
+          </Link>
           <button className="admin-logout-btn" onClick={handleLogout}>
             <LogOut size={18} />
             <span>Logout</span>

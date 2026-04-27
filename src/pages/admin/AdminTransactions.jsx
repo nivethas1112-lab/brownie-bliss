@@ -46,7 +46,7 @@ const AdminTransactions = () => {
       <div className="report-summary-cards">
         <div className="summary-card">
           <span className="summary-label">Total Net Revenue</span>
-          <span className="summary-value positive">${totalRevenue.toFixed(2)}</span>
+          <span className="summary-value positive">₹{totalRevenue.toFixed(2)}</span>
         </div>
         <div className="summary-card">
           <span className="summary-label">Successful Transactions</span>
@@ -58,7 +58,7 @@ const AdminTransactions = () => {
         </div>
         <div className="summary-card">
           <span className="summary-label">Total Refunded</span>
-          <span className="summary-value" style={{ color: '#c62828' }}>${refundedAmount.toFixed(2)}</span>
+          <span className="summary-value" style={{ color: '#c62828' }}>₹{refundedAmount.toFixed(2)}</span>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ const AdminTransactions = () => {
                   </div>
                 </td>
                 <td>
-                  <span className="txn-amount">${txn.amount.toFixed(2)}</span>
+                  <span className="txn-amount">₹{txn.amount.toFixed(2)}</span>
                 </td>
                 <td>
                   <span className={`status ${txn.status}`}>

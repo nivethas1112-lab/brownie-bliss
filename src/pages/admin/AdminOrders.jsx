@@ -98,7 +98,7 @@ const AdminOrders = () => {
                 </td>
                 <td>{order.date}</td>
                 <td>{order.items}</td>
-                <td className="order-total">${order.total.toFixed(2)}</td>
+                <td className="order-total">₹{order.total.toFixed(2)}</td>
                 <td>
                   <select
                     className="status-select"
@@ -159,20 +159,20 @@ const AdminOrders = () => {
                 <div className="order-items">
                   <div className="order-item">
                     <span>Chocolate Brownie x 2</span>
-                    <span>$25.98</span>
+                    <span>₹25.98</span>
                   </div>
                   <div className="order-item">
                     <span>Cookie Tub x 1</span>
-                    <span>$22.99</span>
+                    <span>₹22.99</span>
                   </div>
                   <div className="order-item">
                     <span>Delivery Fee</span>
-                    <span>$5.00</span>
+                    <span>₹5.00</span>
                   </div>
                 </div>
                 <div className="order-total-row">
                   <span>Total</span>
-                  <strong>${selectedOrder.total.toFixed(2)}</strong>
+                  <strong>₹{selectedOrder.total.toFixed(2)}</strong>
                 </div>
               </div>
 

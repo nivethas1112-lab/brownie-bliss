@@ -76,7 +76,7 @@ const AdminCustomers = () => {
                   </div>
                 </td>
                 <td>{customer.orders}</td>
-                <td className="customer-spent">${customer.totalSpent.toFixed(2)}</td>
+                <td className="customer-spent">₹{customer.totalSpent.toFixed(2)}</td>
                 <td>{customer.joined}</td>
               </tr>
             ))}

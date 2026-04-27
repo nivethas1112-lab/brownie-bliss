@@ -191,9 +191,31 @@ const AdminBlogs = () => {
 
                 <div className="admin-form-group">
                   <label>Cover Image</label>
-                  <div className="admin-image-upload">
-                    <Upload size={24} />
-                    <span>Drag & drop or click to upload cover image</span>
+                  <div 
+                    className="admin-image-upload" 
+                    onClick={() => document.getElementById('blog-image-upload').click()}
+                    style={formData.image && !formData.image.startsWith('/assets') ? { padding: 0, overflow: 'hidden', border: 'none', height: '200px' } : {}}
+                  >
+                    {formData.image && !formData.image.startsWith('/assets') ? (
+                      <img src={formData.image} alt="Cover Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '20px' }} />
+                    ) : (
+                      <>
+                        <Upload size={24} />
+                        <span>Drag & drop or click to upload cover image</span>
+                      </>
+                    )}
+                    <input 
+                      type="file" 
+                      id="blog-image-upload" 
+                      style={{ display: 'none' }} 
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const fileUrl = URL.createObjectURL(e.target.files[0])
+                          setFormData({ ...formData, image: fileUrl })
+                        }
+                      }}
+                    />
                   </div>
                 </div>
 

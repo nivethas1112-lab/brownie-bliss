@@ -129,10 +129,10 @@ const AdminShipping = () => {
                     <span className="admin-shipping-regions">{zone.regions}</span>
                   </div>
                 </td>
-                <td>${zone.baseRate.toFixed(2)}</td>
+                <td>₹{zone.baseRate.toFixed(2)}</td>
                 <td>
                   {zone.freeThreshold 
-                    ? <span style={{ color: '#2e7d32', fontWeight: 500 }}>${zone.freeThreshold.toFixed(2)}+</span> 
+                    ? <span style={{ color: '#2e7d32', fontWeight: 500 }}>₹{zone.freeThreshold.toFixed(2)}+</span> 
                     : <span style={{ color: '#888' }}>Not Available</span>}
                 </td>
                 <td>{zone.estimatedDays}</td>
@@ -197,7 +197,7 @@ const AdminShipping = () => {
 
                 <div className="admin-form-row">
                   <div className="admin-form-group">
-                    <label>Base Rate ($)</label>
+                    <label>Base Rate (₹)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -209,7 +209,7 @@ const AdminShipping = () => {
                     />
                   </div>
                   <div className="admin-form-group">
-                    <label>Free Shipping Threshold ($)</label>
+                    <label>Free Shipping Threshold (₹)</label>
                     <input
                       type="number"
                       step="0.01"

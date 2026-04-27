@@ -63,7 +63,7 @@ const AdminDashboard = () => {
             <DollarSign size={28} />
           </div>
           <div className="admin-stat-content">
-            <h3>${stats.totalRevenue.toLocaleString()}</h3>
+            <h3>₹{stats.totalRevenue.toLocaleString()}</h3>
             <p>Total Revenue</p>
           </div>
         </div>
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
                     <td>#{order.id}</td>
                     <td>{order.customer}</td>
                     <td>{order.items}</td>
-                    <td>${order.total.toFixed(2)}</td>
+                    <td>₹{order.total.toFixed(2)}</td>
                     <td>
                       <span className={`status ${order.status}`}>
                         {order.status.charAt(0).toUpperCase() + order.status.slice(1)}

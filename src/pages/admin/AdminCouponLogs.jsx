@@ -67,9 +67,9 @@ const AdminCouponLogs = () => {
                   <span className="log-coupon-code">{log.couponCode}</span>
                 </td>
                 <td>
-                  <span className="log-discount-amount">-${log.discountAmount.toFixed(2)}</span>
+                  <span className="log-discount-amount">-₹{log.discountAmount.toFixed(2)}</span>
                 </td>
-                <td>${log.orderTotal.toFixed(2)}</td>
+                <td>₹{log.orderTotal.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>

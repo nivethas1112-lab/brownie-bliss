@@ -4,12 +4,14 @@ import './AdminProfile.css'
 
 const AdminProfile = () => {
   const adminName = localStorage.getItem('adminName') || 'Administrator'
+  const savedAvatar = localStorage.getItem('adminAvatar') || '/assets/3-brownie-stack-falling-playful-600nw-2723000925-removebg-preview.png'
   
   const [formData, setFormData] = useState({
     firstName: adminName.split(' ')[0] || 'Admin',
     lastName: adminName.split(' ')[1] || '',
     email: 'admin@browniebliss.com',
     phone: '+1 (555) 123-4567',
+    avatar: savedAvatar,
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -22,9 +24,12 @@ const AdminProfile = () => {
       return
     }
     
-    // Update local storage with new name if changed
+    // Update local storage with new name and avatar
     const fullName = `${formData.firstName} ${formData.lastName}`.trim()
     localStorage.setItem('adminName', fullName)
+    if (formData.avatar) {
+      localStorage.setItem('adminAvatar', formData.avatar)
+    }
     
     alert('Profile updated successfully!')
     setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }))
@@ -46,11 +51,32 @@ const AdminProfile = () => {
         
         <div className="profile-avatar-section">
           <div className="profile-avatar-wrapper">
-            <div className="profile-avatar">
-              {getInitial()}
+            <div 
+              className="profile-avatar"
+              style={formData.avatar ? { backgroundImage: `url("${formData.avatar}")`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' } : {}}
+            >
+              {!formData.avatar && getInitial()}
             </div>
-            <div className="profile-avatar-edit">
+            <div 
+              className="profile-avatar-edit" 
+              onClick={() => document.getElementById('avatar-upload').click()}
+            >
               <Camera size={16} />
+              <input 
+                type="file" 
+                id="avatar-upload" 
+                style={{ display: 'none' }} 
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader()
+                    reader.onload = (event) => {
+                      setFormData({ ...formData, avatar: event.target.result })
+                    }
+                    reader.readAsDataURL(e.target.files[0])
+                  }
+                }}
+              />
             </div>
           </div>
           <h2 className="profile-name">{formData.firstName} {formData.lastName}</h2>

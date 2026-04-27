@@ -157,7 +157,7 @@ const AdminProducts = () => {
                   </div>
                 </td>
                 <td>{product.category}</td>
-                <td>${product.price.toFixed(2)}</td>
+                <td>₹{product.price.toFixed(2)}</td>
                 <td>
                   <span className={product.stock === 0 ? 'out-of-stock' : product.stock < 10 ? 'low-stock' : ''}>
                     {product.stock === 0 ? 'Out of Stock' : product.stock}
@@ -218,7 +218,7 @@ const AdminProducts = () => {
                     </select>
                   </div>
                   <div className="admin-form-group">
-                    <label>Price ($)</label>
+                    <label>Price (₹)</label>
                     <input
                       type="number"
                       step="0.01"

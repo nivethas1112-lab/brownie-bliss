@@ -140,9 +140,9 @@ const AdminCoupons = () => {
                 <td>
                   {coupon.discountType === 'percentage' 
                     ? `${coupon.discountValue}% Off` 
-                    : `$${coupon.discountValue.toFixed(2)} Off`}
+                    : `₹${coupon.discountValue.toFixed(2)} Off`}
                 </td>
-                <td>${coupon.minPurchase.toFixed(2)}</td>
+                <td>₹{coupon.minPurchase.toFixed(2)}</td>
                 <td>
                   {coupon.usedCount} / {coupon.usageLimit}
                   {coupon.usedCount >= coupon.usageLimit && <div className="expiry-warning">Limit Reached</div>}
@@ -208,7 +208,7 @@ const AdminCoupons = () => {
                       onChange={(e) => setFormData({ ...formData, discountType: e.target.value })}
                     >
                       <option value="percentage">Percentage (%)</option>
-                      <option value="fixed">Fixed Amount ($)</option>
+                      <option value="fixed">Fixed Amount (₹)</option>
                     </select>
                   </div>
                   <div className="admin-form-group">
@@ -228,7 +228,7 @@ const AdminCoupons = () => {
 
                 <div className="admin-form-row">
                   <div className="admin-form-group">
-                    <label>Min Purchase Amount ($)</label>
+                    <label>Min Purchase Amount (₹)</label>
                     <input
                       type="number"
                       step="0.01"
