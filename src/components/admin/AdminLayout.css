@@ -39,8 +39,26 @@
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
-.admin-nav {
+.admin-nav-wrapper {
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.admin-nav-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.admin-nav-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-nav-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.admin-nav {
   padding: 1.5rem 1rem;
   display: flex;
   flex-direction: column;
@@ -50,7 +68,7 @@
 .admin-nav-item {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  justify-content: space-between;
   padding: 1rem 1.2rem;
   border-radius: 16px;
   color: rgba(255, 255, 255, 0.75);
@@ -58,6 +76,14 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-nav-item-content {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
 }
 
 .admin-nav-item::before {
@@ -92,6 +118,74 @@
 .admin-nav-item span {
   position: relative;
   z-index: 1;
+}
+
+.admin-nav-dropdown-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dropdown-toggle.child-active {
+  color: var(--white);
+}
+
+.dropdown-toggle.child-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 40%;
+  background: var(--pink-accent);
+  border-radius: 0 4px 4px 0;
+  transition: height 0.3s ease;
+  opacity: 0.5;
+}
+
+.admin-nav-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-left: 2.8rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.admin-nav-dropdown-item:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-nav-dropdown-item.active {
+  color: var(--pink-accent);
+  background: rgba(255, 228, 225, 0.1);
+}
+
+.dropdown-item-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.6;
+}
+
+.admin-nav-dropdown-item.active .dropdown-item-dot {
+  opacity: 1;
+  box-shadow: 0 0 5px var(--pink-accent);
 }
 
 .admin-sidebar-footer {

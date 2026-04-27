@@ -1,0 +1,143 @@
+.admin-transactions {
+  animation: fadeIn 0.4s ease;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+}
+
+.admin-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fff9f9 100%);
+  padding: 1rem 1.3rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(75, 46, 46, 0.06);
+  flex: 1;
+  max-width: 400px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.admin-search-box:focus-within {
+  border-color: var(--pink-accent);
+  box-shadow: 0 4px 20px rgba(255, 228, 225, 0.4);
+}
+
+.admin-search-box input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  width: 100%;
+  background: transparent;
+}
+
+.admin-search-box svg {
+  color: var(--text-muted);
+}
+
+.txn-id {
+  font-family: monospace;
+  font-weight: 600;
+  color: #1976d2;
+  font-size: 0.95rem;
+}
+
+.txn-order-link {
+  color: var(--brown-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(75, 46, 46, 0.3);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.txn-order-link:hover {
+  text-decoration-color: var(--brown-primary);
+}
+
+.txn-amount {
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--brown-primary);
+}
+
+.payment-method.card {
+  color: #0277bd;
+}
+
+.payment-method.paypal {
+  color: #00838f;
+}
+
+.payment-method.wallet {
+  color: #f57c00;
+}
+
+.status.failed {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status.refunded {
+  background: #eceff1;
+  color: #546e7a;
+}
+
+.report-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(75, 46, 46, 0.05);
+  border: 1px solid rgba(255, 228, 225, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.summary-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-value {
+  color: var(--brown-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+}
+
+.summary-value.positive {
+  color: #2e7d32;
+}
+
+@media (max-width: 768px) {
+  .admin-filters {
+    flex-direction: column;
+  }
+  .admin-search-box {
+    max-width: 100%;
+  }
+}

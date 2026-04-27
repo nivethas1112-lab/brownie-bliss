@@ -1,0 +1,123 @@
+.admin-inquiries {
+  animation: fadeIn 0.4s ease;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+}
+
+.admin-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fff9f9 100%);
+  padding: 1rem 1.3rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(75, 46, 46, 0.06);
+  flex: 1;
+  max-width: 400px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.admin-search-box:focus-within {
+  border-color: var(--pink-accent);
+  box-shadow: 0 4px 20px rgba(255, 228, 225, 0.4);
+}
+
+.admin-search-box input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  width: 100%;
+  background: transparent;
+}
+
+.admin-search-box svg {
+  color: var(--text-muted);
+}
+
+.inquiry-subject {
+  font-weight: 600;
+  color: var(--brown-primary);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.inquiry-email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.status.new {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status.replied {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.inquiry-message-view {
+  background: rgba(255, 228, 225, 0.2);
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 228, 225, 0.5);
+}
+
+.inquiry-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed rgba(75, 46, 46, 0.1);
+  font-size: 0.9rem;
+}
+
+.inquiry-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.inquiry-meta-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.inquiry-meta-value {
+  color: var(--brown-primary);
+  font-weight: 600;
+}
+
+.inquiry-body {
+  color: var(--text-dark);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.reply-section {
+  border-top: 2px solid rgba(255, 228, 225, 0.3);
+  padding-top: 1.5rem;
+}
+
+.reply-section h3 {
+  color: var(--brown-primary);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .admin-filters {
+    flex-direction: column;
+  }
+  .admin-search-box {
+    max-width: 100%;
+  }
+}

@@ -195,28 +195,7 @@ const AdminLogin = () => {
             )}
           </motion.button>
 
-          <motion.div 
-            className="admin-login-footer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            <a href="/" className="back-to-site">
-              <span>←</span> Back to sweet shop
-            </a>
-          </motion.div>
         </motion.form>
-
-        <motion.div 
-          className="admin-login-info"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-        >
-          <p><span className="info-icon">💡</span> Demo Credentials</p>
-          <p className="demo-email">admin@browniebliss.com</p>
-          <p className="demo-password">admin123</p>
-        </motion.div>
       </motion.div>
     </div>
   )

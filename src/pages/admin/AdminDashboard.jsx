@@ -107,30 +107,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="admin-quick-stats">
-          <h2>Sales Overview</h2>
-          <div className="admin-chart-placeholder">
-            <div className="admin-chart-bars">
-              <div className="chart-bar" style={{ height: '60%' }}><span>Mon</span></div>
-              <div className="chart-bar" style={{ height: '80%' }}><span>Tue</span></div>
-              <div className="chart-bar" style={{ height: '45%' }}><span>Wed</span></div>
-              <div className="chart-bar" style={{ height: '90%' }}><span>Thu</span></div>
-              <div className="chart-bar" style={{ height: '70%' }}><span>Fri</span></div>
-              <div className="chart-bar" style={{ height: '95%' }}><span>Sat</span></div>
-              <div className="chart-bar" style={{ height: '50%' }}><span>Sun</span></div>
-            </div>
-          </div>
-          <div className="admin-weekly-summary">
-            <div className="summary-item">
-              <span>This Week</span>
-              <strong>$2,450</strong>
-            </div>
-            <div className="summary-item">
-              <span>vs Last Week</span>
-              <strong className="positive"><TrendingUp size={14} /> +12%</strong>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )

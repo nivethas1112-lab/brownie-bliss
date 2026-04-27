@@ -1,0 +1,81 @@
+.admin-shipping {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+}
+
+.admin-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fff9f9 100%);
+  padding: 1rem 1.3rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(75, 46, 46, 0.06);
+  flex: 1;
+  max-width: 400px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.admin-search-box:focus-within {
+  border-color: var(--pink-accent);
+  box-shadow: 0 4px 20px rgba(255, 228, 225, 0.4);
+}
+
+.admin-search-box input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  width: 100%;
+  background: transparent;
+}
+
+.admin-search-box svg {
+  color: var(--text-muted);
+}
+
+.admin-shipping-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.admin-shipping-name {
+  font-weight: 600;
+  color: var(--brown-primary);
+  font-size: 1.05rem;
+}
+
+.admin-shipping-regions {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .admin-filters {
+    flex-direction: column;
+  }
+  .admin-search-box {
+    max-width: 100%;
+  }
+  .admin-form-row {
+    grid-template-columns: 1fr;
+  }
+}

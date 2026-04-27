@@ -340,63 +340,6 @@
   40% { transform: scale(1.2); opacity: 1; }
 }
 
-.admin-login-footer {
-  text-align: center;
-  margin-top: 0.5rem;
-}
-
-.back-to-site {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  transition: all 0.3s ease;
-}
-
-.back-to-site:hover {
-  color: var(--brown-primary);
-}
-
-.back-to-site span {
-  font-size: 1.1rem;
-}
-
-.admin-login-info {
-  margin-top: 1.5rem;
-  padding: 1.2rem;
-  background: linear-gradient(135deg, var(--pink-accent) 0%, #fff5f6 100%);
-  border-radius: 20px;
-  font-size: 0.85rem;
-  text-align: center;
-  border: 2px dashed rgba(75, 46, 46, 0.2);
-}
-
-.admin-login-info p {
-  margin: 0.3rem 0;
-  color: var(--text-dark);
-}
-
-.admin-login-info p:first-child {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: var(--brown-primary);
-}
-
-.info-icon {
-  font-size: 1rem;
-}
-
-.demo-email, .demo-password {
-  font-family: 'Courier New', monospace;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 0.3rem 0.6rem;
-  border-radius: 8px;
-  display: inline-block;
-}
 
 @media (max-width: 480px) {
   .admin-login-container {
