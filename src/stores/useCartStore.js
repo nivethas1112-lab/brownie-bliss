@@ -66,9 +66,11 @@ export const useCartStore = create(
         // Auto-open cart
         set({ isCartOpen: true });
 
+        // Always update UI instantly first.
+        get().addItemOptimistic(product, quantity);
+
         if (!token) {
-          // Guest mode - Local only
-          get().addItemOptimistic(product, quantity);
+          // Guest mode - local only
           return;
         }
 
@@ -88,7 +90,7 @@ export const useCartStore = create(
           get().updateTotals();
         } catch (error) {
           console.error('Cart sync error:', error);
-          get().addItemOptimistic(product, quantity);
+          // Keep optimistic UI state if sync fails.
           set({ isLoading: false });
         }
       },
@@ -100,13 +102,17 @@ export const useCartStore = create(
         }
 
         const token = localStorage.getItem(env.authTokenKey);
+        const previousItems = get().items;
+
+        // Instant UI update first.
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.id === itemId ? { ...item, quantity } : item
+          ),
+        }));
+        get().updateTotals();
+
         if (!token) {
-          set((state) => ({
-            items: state.items.map((item) =>
-              item.id === itemId ? { ...item, quantity } : item
-            ),
-          }));
-          get().updateTotals();
           return;
         }
 
@@ -125,17 +131,34 @@ export const useCartStore = create(
           set({ items, isLoading: false });
           get().updateTotals();
         } catch (error) {
-          set({ error: error.message, isLoading: false });
+          const isNetworkIssue = !error?.response && (
+            error?.code === 'ERR_NETWORK' ||
+            error?.message?.includes('Network Error')
+          );
+
+          if (isNetworkIssue || error?.response?.status === 404) {
+            // Keep optimistic value in demo/offline mode.
+            set({ isLoading: false });
+            return;
+          }
+
+          // Roll back only on real server-side validation/conflict errors.
+          set({ items: previousItems, error: error.message, isLoading: false });
+          get().updateTotals();
         }
       },
 
       removeItem: async (itemId) => {
         const token = localStorage.getItem(env.authTokenKey);
+        const previousItems = get().items;
+
+        // Instant UI update first.
+        set((state) => ({
+          items: state.items.filter((item) => item.id !== itemId),
+        }));
+        get().updateTotals();
+
         if (!token) {
-          set((state) => ({
-            items: state.items.filter((item) => item.id !== itemId),
-          }));
-          get().updateTotals();
           return;
         }
 
@@ -154,7 +177,20 @@ export const useCartStore = create(
           set({ items, isLoading: false });
           get().updateTotals();
         } catch (error) {
-          set({ error: error.message, isLoading: false });
+          const isNetworkIssue = !error?.response && (
+            error?.code === 'ERR_NETWORK' ||
+            error?.message?.includes('Network Error')
+          );
+
+          if (isNetworkIssue || error?.response?.status === 404) {
+            // Keep optimistic delete in demo/offline mode.
+            set({ isLoading: false });
+            return;
+          }
+
+          // Roll back only for real server-side errors.
+          set({ items: previousItems, error: error.message, isLoading: false });
+          get().updateTotals();
         }
       },
 

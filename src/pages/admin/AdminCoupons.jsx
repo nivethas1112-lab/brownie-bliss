@@ -201,16 +201,7 @@ const AdminCoupons = () => {
     if (!dateString) return false
     return new Date(dateString) < new Date()
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-coupons" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-coupons">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Manage Coupons</h1>

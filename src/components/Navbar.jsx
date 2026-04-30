@@ -105,7 +105,6 @@ const Navbar = ({ onCartClick }) => {
 
           <Link to="/about" className="nav-link">About Us</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
-          <Link to="/admin/login" className="nav-link admin-link">Admin Login</Link>
           <button className="nav-link cart-btn" onClick={onCartClick}>
             <ShoppingBag size={20} />
             <span className="cart-count">{totalItems}</span>
@@ -157,7 +156,6 @@ const Navbar = ({ onCartClick }) => {
             </div>
             <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
             <Link to="/contact" onClick={() => setIsOpen(false)}>Contact</Link>
-            <Link to="/admin/login" onClick={() => setIsOpen(false)}>Admin Login</Link>
           </motion.div>
         )}
       </AnimatePresence>

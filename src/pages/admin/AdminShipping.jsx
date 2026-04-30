@@ -189,16 +189,7 @@ const AdminShipping = () => {
       alert('Failed to delete shipping zone')
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-shipping" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-shipping">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Shipping Info</h1>

@@ -9,11 +9,58 @@ import { useAuthStore } from '../stores/useAuthStore.js';
 
 const apiClient = axios.create({
   baseURL: env.getApiUrl(),
+  timeout: 700,
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true,
 });
+
+const GET_CACHE_TTL_MS = 60 * 1000;
+const getCache = new Map();
+let apiUnavailableUntil = 0;
+const API_BACKOFF_MS = 30 * 1000;
+
+const cachedGet = async (key, requestFn, ttlMs = GET_CACHE_TTL_MS) => {
+  const now = Date.now();
+  const cached = getCache.get(key);
+
+  if (cached && now - cached.ts < ttlMs) {
+    return cached.data;
+  }
+
+  // If we recently detected backend is unavailable, skip waiting on network.
+  if (now < apiUnavailableUntil) {
+    if (cached) return cached.data;
+    throw new Error('API temporarily unavailable');
+  }
+
+  // Browser explicitly offline: don't wait for request timeout.
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    if (cached) return cached.data;
+    throw new Error('Offline');
+  }
+
+  try {
+    const data = await requestFn();
+    apiUnavailableUntil = 0;
+    getCache.set(key, { data, ts: Date.now() });
+    return data;
+  } catch (error) {
+    const isNetworkIssue = !error?.response && (
+      error?.code === 'ERR_NETWORK' ||
+      error?.code === 'ECONNABORTED' ||
+      error?.message?.includes('Network Error') ||
+      error?.message?.includes('timeout')
+    );
+    if (isNetworkIssue) {
+      apiUnavailableUntil = Date.now() + API_BACKOFF_MS;
+    }
+    // If fetch fails, serve stale cache when available for faster UX.
+    if (cached) return cached.data;
+    throw error;
+  }
+};
 
 const isOfflineMutationError = (error) => {
   const status = error?.response?.status;
@@ -109,7 +156,7 @@ export const api = {
 
   // ==================== Products ====================
   products: {
-    getAll: (params = {}) => apiClient.get('/products', { params }),
+    getAll: (params = {}) => cachedGet(`products:getAll:${JSON.stringify(params)}`, () => apiClient.get('/products', { params })),
     getById: (id) => apiClient.get(`/products/${id}`),
     getByCategory: (category, params = {}) =>
       apiClient.get(`/products/category/${category}`, { params }),
@@ -120,7 +167,7 @@ export const api = {
 
   // ==================== Categories ====================
   categories: {
-    getAll: () => apiClient.get('/categories'),
+    getAll: () => cachedGet('categories:getAll', () => apiClient.get('/categories')),
     getById: (id) => apiClient.get(`/categories/${id}`),
     create: (data) => safeMutation(() => apiClient.post('/categories', data), { category: data }),
     update: (id, data) => safeMutation(() => apiClient.put(`/categories/${id}`, data), { id, ...data }),
@@ -140,7 +187,7 @@ export const api = {
 
   // ==================== Orders ====================
   orders: {
-    getAll: (params = {}) => apiClient.get('/orders', { params }),
+    getAll: (params = {}) => cachedGet(`orders:getAll:${JSON.stringify(params)}`, () => apiClient.get('/orders', { params })),
     getById: (id) => apiClient.get(`/orders/${id}`),
     create: (data) => safeMutation(() => apiClient.post('/orders', data), { order: data }),
     updateStatus: (id, status) => safeMutation(() => apiClient.patch(`/orders/${id}/status`, { status }), { id, status }),
@@ -149,7 +196,7 @@ export const api = {
 
   // ==================== Customers ====================
   customers: {
-    getAll: (params = {}) => apiClient.get('/customers', { params }),
+    getAll: (params = {}) => cachedGet(`customers:getAll:${JSON.stringify(params)}`, () => apiClient.get('/customers', { params })),
     getById: (id) => apiClient.get(`/customers/${id}`),
     update: (id, data) => safeMutation(() => apiClient.put(`/customers/${id}`, data), { id, ...data }),
     delete: (id) => safeMutation(() => apiClient.delete(`/customers/${id}`), { id, deleted: true }),
@@ -157,7 +204,7 @@ export const api = {
 
   // ==================== Coupons ====================
   coupons: {
-    getAll: () => apiClient.get('/coupons'),
+    getAll: () => cachedGet('coupons:getAll', () => apiClient.get('/coupons')),
     getById: (id) => apiClient.get(`/coupons/${id}`),
     create: (data) => safeMutation(() => apiClient.post('/coupons', data), { coupon: data }),
     update: (id, data) => safeMutation(() => apiClient.put(`/coupons/${id}`, data), { id, ...data }),
@@ -167,7 +214,7 @@ export const api = {
 
    // ==================== Shipping ====================
    shipping: {
-     getZones: () => apiClient.get('/shipping/zones'),
+     getZones: () => cachedGet('shipping:getZones', () => apiClient.get('/shipping/zones')),
      createZone: (data) => safeMutation(() => apiClient.post('/shipping/zones', data), { zone: data }),
      updateZone: (id, data) => safeMutation(() => apiClient.put(`/shipping/zones/${id}`, data), { id, ...data }),
      deleteZone: (id) => safeMutation(() => apiClient.delete(`/shipping/zones/${id}`), { id, deleted: true }),
@@ -175,14 +222,14 @@ export const api = {
 
    // ==================== Transactions ====================
    transactions: {
-     getAll: (params = {}) => apiClient.get('/transactions', { params }),
+     getAll: (params = {}) => cachedGet(`transactions:getAll:${JSON.stringify(params)}`, () => apiClient.get('/transactions', { params })),
      getById: (id) => apiClient.get(`/transactions/${id}`),
      update: (id, data) => safeMutation(() => apiClient.patch(`/transactions/${id}`, data), { id, ...data }),
    },
 
   // ==================== Inquiries ====================
   inquiries: {
-    getAll: () => apiClient.get('/inquiries'),
+    getAll: () => cachedGet('inquiries:getAll', () => apiClient.get('/inquiries')),
     getById: (id) => apiClient.get(`/inquiries/${id}`),
     create: (data) => safeMutation(() => apiClient.post('/inquiries', data), { inquiry: data }),
     updateStatus: (id, status) => safeMutation(() => apiClient.patch(`/inquiries/${id}/status`, { status }), { id, status }),
@@ -191,7 +238,7 @@ export const api = {
 
    // ==================== Blogs ====================
    blogs: {
-     getAll: (params = {}) => apiClient.get('/blogs', { params }),
+     getAll: (params = {}) => cachedGet(`blogs:getAll:${JSON.stringify(params)}`, () => apiClient.get('/blogs', { params })),
      getById: (id) => apiClient.get(`/blogs/${id}`),
      create: (data) => safeMutation(() => apiClient.post('/blogs', data), { blog: data }),
      update: (id, data) => safeMutation(() => apiClient.put(`/blogs/${id}`, data), { id, ...data }),
@@ -200,7 +247,7 @@ export const api = {
 
    // ==================== Users/Admins ====================
    users: {
-     getAll: (params = {}) => apiClient.get('/users', { params }),
+     getAll: (params = {}) => cachedGet(`users:getAll:${JSON.stringify(params)}`, () => apiClient.get('/users', { params })),
      getById: (id) => apiClient.get(`/users/${id}`),
      create: (data) => safeMutation(() => apiClient.post('/users', data), { user: data }),
      update: (id, data) => safeMutation(() => apiClient.put(`/users/${id}`, data), { id, ...data }),
@@ -210,7 +257,7 @@ export const api = {
 
   // ==================== Testimonials ====================
   testimonials: {
-    getAll: () => apiClient.get('/testimonials'),
+    getAll: () => cachedGet('testimonials:getAll', () => apiClient.get('/testimonials')),
     getById: (id) => apiClient.get(`/testimonials/${id}`),
     create: (data) => safeMutation(() => apiClient.post('/testimonials', data), { testimonial: data }),
     update: (id, data) => safeMutation(() => apiClient.put(`/testimonials/${id}`, data), { id, ...data }),
@@ -231,8 +278,8 @@ export const api = {
 
   // ==================== Dashboard Stats ====================
   dashboard: {
-    getStats: (params = {}) => apiClient.get('/dashboard/stats', { params }),
-    getRecentOrders: (limit = 5) => apiClient.get(`/dashboard/recent-orders?limit=${limit}`),
+    getStats: (params = {}) => cachedGet(`dashboard:getStats:${JSON.stringify(params)}`, () => apiClient.get('/dashboard/stats', { params }), 30000),
+    getRecentOrders: (limit = 5) => cachedGet(`dashboard:getRecentOrders:${limit}`, () => apiClient.get(`/dashboard/recent-orders?limit=${limit}`), 30000),
     getSalesData: (range = '7d') => apiClient.get(`/dashboard/sales?range=${range}`),
   },
 

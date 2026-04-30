@@ -181,16 +181,7 @@ const AdminCategories = () => {
       alert('Failed to delete category')
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-categories" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-categories">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Categories</h1>

@@ -234,16 +234,7 @@ const AdminProducts = () => {
       alert('Failed to delete product.')
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-products" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-products">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Products</h1>

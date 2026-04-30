@@ -145,16 +145,7 @@ const AdminCustomers = () => {
       alert('Failed to update status')
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-customers" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-customers">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Customers</h1>

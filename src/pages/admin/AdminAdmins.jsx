@@ -162,16 +162,7 @@ const AdminAdmins = () => {
       alert('Failed to update status')
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-admins" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-admins">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Manage Administrators</h1>

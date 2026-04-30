@@ -159,16 +159,7 @@ const AdminBlogs = () => {
       alert('Failed to delete blog')
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-blogs" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-blogs">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Blog Posts</h1>

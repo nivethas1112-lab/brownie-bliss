@@ -171,16 +171,7 @@ const AdminTransactions = () => {
     }
     fetchTransactions()
   }, [])
-
-  if (isLoading) {
-    return (
-      <div className="atrn-main-container" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="atrn-main-container">
       {/* Header Section */}
       <div className="atrn-header">

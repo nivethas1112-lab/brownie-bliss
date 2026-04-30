@@ -94,16 +94,7 @@ const AdminInquiries = () => {
       alert('Failed to delete inquiry')
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-inquiries" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-inquiries">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Customer Inquiries</h1>

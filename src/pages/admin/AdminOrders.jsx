@@ -89,16 +89,7 @@ const AdminOrders = () => {
       default: return '#6c757d'
     }
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-orders" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-orders">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Orders</h1>

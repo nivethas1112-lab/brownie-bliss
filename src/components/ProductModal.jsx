@@ -8,10 +8,10 @@ const ProductModal = ({ isOpen, onClose, product }) => {
 
   if (!product) return null
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     try {
-      // Add product to cart (handles both local storage for guests and API for logged-in users)
-      await addItem(product, 1)
+      // Add instantly; backend sync runs in the store.
+      addItem(product, 1)
       onClose()
     } catch (error) {
       console.error('Failed to add item to cart:', error)

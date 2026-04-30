@@ -48,16 +48,7 @@ const AdminCouponLogs = () => {
     const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }
     return new Date(dateString).toLocaleDateString('en-US', options)
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-coupon-logs" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-coupon-logs">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Coupon Usage Log</h1>

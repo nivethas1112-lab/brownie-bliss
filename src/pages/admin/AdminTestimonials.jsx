@@ -191,16 +191,7 @@ const AdminTestimonials = () => {
   const renderStars = (rating) => {
     return Array(rating).fill('★').join('')
   }
-
-  if (isLoading) {
-    return (
-      <div className="admin-testimonials" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-        <Loader size="large" />
-      </div>
-    )
-  }
-
-  return (
+return (
     <div className="admin-testimonials">
       <div className="admin-page-header">
         <h1 className="admin-page-title">Testimonials</h1>
