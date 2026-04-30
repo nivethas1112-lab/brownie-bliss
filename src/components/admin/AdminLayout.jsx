@@ -1,21 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, LogOut, 
   ChevronDown, ChevronRight, FolderTree, Ticket, Truck, 
-  MessageSquare, FileText, FileEdit, Star, User
+  MessageSquare, FileText, FileEdit, Star, User, Shield,
+  Bell, CheckCircle, AlertCircle, X
 } from 'lucide-react'
+import { useAuthStore } from '../../stores/useAuthStore.js'
 import './AdminLayout.css'
 
 const AdminLayout = () => {
   const location = useLocation()
-  const adminName = localStorage.getItem('adminName') || 'Admin'
-  const adminAvatar = localStorage.getItem('adminAvatar') || '/assets/3-brownie-stack-falling-playful-600nw-2723000925-removebg-preview.png'
+  const { user, clearCredentials } = useAuthStore()
+  const adminName = user?.name || 'Admin'
+  const adminAvatar = user?.avatar || '/assets/3-brownie-stack-falling-playful-600nw-2723000925-removebg-preview.png'
   
   const [openDropdowns, setOpenDropdowns] = useState({
     catalogs: true,
     coupons: false
   })
+
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' })
+
+  useEffect(() => {
+    const handleNotification = (event) => {
+      setToast({
+        show: true,
+        message: event.detail.message,
+        type: event.detail.type || 'success'
+      })
+      setTimeout(() => setToast(prev => ({ ...prev, show: false })), 4000)
+    }
+    window.addEventListener('admin-notification', handleNotification)
+    return () => window.removeEventListener('admin-notification', handleNotification)
+  }, [])
 
   const toggleDropdown = (key) => {
     setOpenDropdowns(prev => ({
@@ -25,9 +43,7 @@ const AdminLayout = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken')
-    localStorage.removeItem('adminName')
-    localStorage.removeItem('adminAvatar')
+    clearCredentials()
     window.location.href = '/admin/login'
   }
 
@@ -59,8 +75,9 @@ const AdminLayout = () => {
     { path: '/admin/transactions', icon: FileText, label: 'Transaction Report' },
     { path: '/admin/blogs', icon: FileEdit, label: 'Blogs' },
     { path: '/admin/testimonials', icon: Star, label: 'Testimonials' },
-    { path: '/admin/customers', icon: Users, label: 'Users' },
+    { path: '/admin/customers', icon: Users, label: 'Customers' },
     { path: '/admin/profile', icon: User, label: 'Profile' },
+    { path: '/admin/admins', icon: Shield, label: 'Admin' },
   ]
 
   return (
@@ -150,6 +167,19 @@ const AdminLayout = () => {
       <main className="admin-main">
         <Outlet />
       </main>
+
+      {/* Global Toast Notification */}
+      {toast.show && (
+        <div className={`admin-toast ${toast.type}`}>
+          <div className="toast-content">
+            {toast.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+            <span>{toast.message}</span>
+          </div>
+          <button className="toast-close" onClick={() => setToast({ ...toast, show: false })}>
+            <X size={16} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }

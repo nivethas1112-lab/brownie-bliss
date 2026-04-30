@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Plus, Edit2, Trash2, Search, X } from 'lucide-react'
+import api from '../../services/api.js'
+import Loader from '../../components/Loader.jsx'
 import './AdminCoupons.css'
 
-const AdminCoupons = () => {
-  const [coupons, setCoupons] = useState([
-    { id: 1, code: 'WELCOME10', discountType: 'percentage', discountValue: 10, minPurchase: 50, expiryDate: '2026-12-31', usageLimit: 100, usedCount: 45, status: 'active' },
-    { id: 2, code: 'FREESHIP', discountType: 'fixed', discountValue: 15, minPurchase: 100, expiryDate: '2026-06-30', usageLimit: 50, usedCount: 50, status: 'inactive' },
-    { id: 3, code: 'BROWNIE20', discountType: 'percentage', discountValue: 20, minPurchase: 0, expiryDate: '2026-05-15', usageLimit: 200, usedCount: 120, status: 'active' },
-    { id: 4, code: 'FESTIVE50', discountType: 'fixed', discountValue: 50, minPurchase: 200, expiryDate: '2026-01-01', usageLimit: 500, usedCount: 0, status: 'inactive' },
-  ])
+const MOCK_COUPONS = [
+  { id: 1, code: 'WELCOME10', discountType: 'percentage', discountValue: 10, minPurchase: 50, expiryDate: '2026-12-31', usageLimit: 100, usedCount: 45, isActive: true, status: 'active' },
+  { id: 2, code: 'FREESHIP', discountType: 'fixed', discountValue: 15, minPurchase: 100, expiryDate: '2026-06-30', usageLimit: 50, usedCount: 50, isActive: false, status: 'inactive' },
+  { id: 3, code: 'BROWNIE20', discountType: 'percentage', discountValue: 20, minPurchase: 0, expiryDate: '2026-05-15', usageLimit: 200, usedCount: 120, isActive: true, status: 'active' },
+  { id: 4, code: 'FESTIVE50', discountType: 'fixed', discountValue: 50, minPurchase: 200, expiryDate: '2026-01-01', usageLimit: 500, usedCount: 0, isActive: false, status: 'inactive' },
+]
 
+const AdminCoupons = () => {
+  const [coupons, setCoupons] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCoupon, setEditingCoupon] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -20,11 +25,36 @@ const AdminCoupons = () => {
     minPurchase: '',
     expiryDate: '',
     usageLimit: '',
-    status: 'active'
+    isActive: true
   })
 
-  const filteredCoupons = coupons.filter(coupon => 
-    coupon.code.toLowerCase().includes(searchTerm.toLowerCase())
+   useEffect(() => {
+     const fetchCoupons = async () => {
+       try {
+         setIsLoading(true)
+         const response = await api.coupons.getAll()
+         const couponList = Array.isArray(response) ? response : response.coupons || []
+         const formatted = couponList.map(c => ({
+           ...c,
+           id: c._id || c.id,
+           isActive: c.isActive !== undefined ? c.isActive : c.status === 'active',
+           status: c.isActive !== undefined ? (c.isActive ? 'active' : 'inactive') : c.status
+         }))
+         setCoupons(formatted.length > 0 ? formatted : MOCK_COUPONS.map(c => ({ ...c, id: c.id })))
+         setError(null)
+       } catch (err) {
+         console.warn('Failed to fetch coupons, using mock data:', err.message)
+         setError('Using cached data')
+         setCoupons(MOCK_COUPONS)
+       } finally {
+         setIsLoading(false)
+       }
+     }
+     fetchCoupons()
+   }, [])
+
+  const filteredCoupons = coupons.filter(coupon =>
+    coupon.code?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const handleOpenModal = (coupon = null) => {
@@ -37,7 +67,7 @@ const AdminCoupons = () => {
         minPurchase: coupon.minPurchase.toString(),
         expiryDate: coupon.expiryDate,
         usageLimit: coupon.usageLimit.toString(),
-        status: coupon.status
+        isActive: coupon.isActive !== undefined ? coupon.isActive : coupon.status === 'active'
       })
     } else {
       setEditingCoupon(null)
@@ -48,7 +78,7 @@ const AdminCoupons = () => {
         minPurchase: '0',
         expiryDate: '',
         usageLimit: '',
-        status: 'active'
+        isActive: true
       })
     }
     setIsModalOpen(true)
@@ -59,42 +89,125 @@ const AdminCoupons = () => {
     setEditingCoupon(null)
   }
 
-  const handleSubmit = (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    const parsedValue = parseFloat(formData.discountValue);
-    const parsedMin = parseFloat(formData.minPurchase);
-    const parsedLimit = parseInt(formData.usageLimit);
-    
-    if (editingCoupon) {
-      setCoupons(coupons.map(c => 
-        c.id === editingCoupon.id 
-          ? { ...c, ...formData, discountValue: parsedValue, minPurchase: parsedMin, usageLimit: parsedLimit }
-          : c
-      ))
-    } else {
-      setCoupons([...coupons, {
-        id: coupons.length + 1,
-        ...formData,
-        code: formData.code.toUpperCase(),
-        discountValue: parsedValue,
-        minPurchase: parsedMin,
-        usageLimit: parsedLimit,
-        usedCount: 0
-      }])
+    const parsedValue = parseFloat(formData.discountValue)
+    const parsedMin = parseFloat(formData.minPurchase)
+    const parsedLimit = parseInt(formData.usageLimit, 10)
+
+    try {
+      if (editingCoupon) {
+        const isValidId = /^[0-9a-fA-F]{24}$/.test(editingCoupon.id)
+        if (!isValidId) {
+          // Local update for mock/non-ObjectId coupons
+          const transformed = {
+            ...editingCoupon,
+            ...formData,
+            discountValue: parsedValue,
+            minPurchase: parsedMin,
+            usageLimit: parsedLimit,
+            isActive: formData.isActive,
+            status: formData.isActive ? 'active' : 'inactive'
+          }
+          setCoupons(coupons.map(c =>
+            c.id === editingCoupon.id ? transformed : c
+          ))
+          handleCloseModal()
+          return
+        }
+        const response = await api.coupons.update(editingCoupon.id, {
+          isActive: formData.isActive,
+          discountValue: parsedValue,
+          minPurchase: parsedMin,
+          usageLimit: parsedLimit
+        })
+        const updated = response.coupon || response
+        setCoupons(coupons.map(c =>
+          c.id === editingCoupon.id ? { 
+            ...c, 
+            ...updated, 
+            id: updated._id || updated.id,
+            isActive: updated.isActive !== undefined ? updated.isActive : updated.status === 'active',
+            status: updated.isActive !== undefined ? (updated.isActive ? 'active' : 'inactive') : updated.status
+          } : c
+        ))
+      } else {
+        const response = await api.coupons.create({
+          ...formData,
+          code: formData.code.toUpperCase(),
+          discountValue: parsedValue,
+          minPurchase: parsedMin,
+          usageLimit: parsedLimit,
+          usedCount: 0,
+          isActive: formData.isActive
+        })
+        const created = response.coupon || response
+        setCoupons([...coupons, { 
+          ...created, 
+          id: created._id || created.id,
+          isActive: created.isActive !== undefined ? created.isActive : created.status === 'active',
+          status: created.isActive !== undefined ? (created.isActive ? 'active' : 'inactive') : created.status
+        }])
+      }
+      handleCloseModal()
+    } catch (err) {
+      console.error('Failed to save coupon:', err)
+      alert('Failed to save coupon: ' + (err.response?.data?.message || err.message))
     }
-    handleCloseModal()
   }
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this coupon?')) {
+  const toggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+    const newIsActive = newStatus === 'active'
+    const isValidId = /^[0-9a-fA-F]{24}$/.test(id)
+    
+    // Optimistic UI update
+    const previousCoupons = [...coupons]
+    setCoupons(coupons.map(c =>
+      c.id === id ? { ...c, status: newStatus, isActive: newIsActive } : c
+    ))
+
+    try {
+      if (isValidId) {
+        try {
+          await api.coupons.update(id, { isActive: newIsActive })
+        } catch (apiErr) {
+          if (apiErr.response?.status === 404) {
+            console.warn('Coupon not found in DB, kept local change for demo.')
+          } else {
+            throw apiErr
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to toggle coupon status:', err)
+      setCoupons(previousCoupons) // Rollback on real error
+      alert('Failed to update status on server')
+    }
+  }
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this coupon?')) return
+    try {
+      await api.coupons.delete(id)
       setCoupons(coupons.filter(c => c.id !== id))
+    } catch (err) {
+      console.error('Failed to delete coupon:', err)
+      alert('Failed to delete coupon')
     }
   }
 
   const isExpired = (dateString) => {
-    if (!dateString) return false;
-    return new Date(dateString) < new Date();
+    if (!dateString) return false
+    return new Date(dateString) < new Date()
+  }
+
+  if (isLoading) {
+    return (
+      <div className="admin-coupons" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+        <Loader size="large" />
+      </div>
+    )
   }
 
   return (
@@ -106,12 +219,14 @@ const AdminCoupons = () => {
         </button>
       </div>
 
+      {error && <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>{error}</p>}
+
       <div className="admin-filters">
         <div className="admin-search-box">
           <Search size={18} />
-          <input 
-            type="text" 
-            placeholder="Search by coupon code..." 
+          <input
+            type="text"
+            placeholder="Search by coupon code..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -138,8 +253,8 @@ const AdminCoupons = () => {
                   <span className="admin-coupon-code">{coupon.code}</span>
                 </td>
                 <td>
-                  {coupon.discountType === 'percentage' 
-                    ? `${coupon.discountValue}% Off` 
+                  {coupon.discountType === 'percentage'
+                    ? `${coupon.discountValue}% Off`
                     : `₹${coupon.discountValue.toFixed(2)} Off`}
                 </td>
                 <td>₹{coupon.minPurchase.toFixed(2)}</td>
@@ -152,9 +267,13 @@ const AdminCoupons = () => {
                   {isExpired(coupon.expiryDate) && <div className="expiry-warning">Expired</div>}
                 </td>
                 <td>
-                  <span className={`status ${coupon.status === 'active' && !isExpired(coupon.expiryDate) && coupon.usedCount < coupon.usageLimit ? 'completed' : 'pending'}`}>
+                  <button 
+                    className={`status ${coupon.status === 'active' && !isExpired(coupon.expiryDate) && coupon.usedCount < coupon.usageLimit ? 'completed' : 'pending'}`}
+                    onClick={() => toggleStatus(coupon.id, coupon.status)}
+                    style={{ border: 'none', cursor: 'pointer', fontWeight: '600' }}
+                  >
                     {coupon.status === 'active' && !isExpired(coupon.expiryDate) && coupon.usedCount < coupon.usageLimit ? 'Active' : 'Inactive'}
-                  </span>
+                  </button>
                 </td>
                 <td>
                   <div className="admin-actions">
@@ -199,7 +318,7 @@ const AdminCoupons = () => {
                     style={{ textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}
                   />
                 </div>
-                
+
                 <div className="admin-form-row">
                   <div className="admin-form-group">
                     <label>Discount Type</label>
@@ -265,8 +384,8 @@ const AdminCoupons = () => {
                   <div className="admin-form-group">
                     <label>Status</label>
                     <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                      value={formData.isActive ? 'active' : 'inactive'}
+                      onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'active' })}
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>

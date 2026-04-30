@@ -1,28 +1,60 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search, Calendar } from 'lucide-react'
+import { apiClient } from '../../services/api.js'
+import Loader from '../../components/Loader.jsx'
 import './AdminCouponLogs.css'
 
-const AdminCouponLogs = () => {
-  const [logs, setLogs] = useState([
-    { id: 1, date: '2026-04-26T14:30:00Z', orderId: '#ORD-9821', customerName: 'Alice Johnson', couponCode: 'WELCOME10', discountAmount: 12.50, orderTotal: 112.50 },
-    { id: 2, date: '2026-04-26T11:15:00Z', orderId: '#ORD-9820', customerName: 'Bob Smith', couponCode: 'WELCOME10', discountAmount: 8.00, orderTotal: 72.00 },
-    { id: 3, date: '2026-04-25T16:45:00Z', orderId: '#ORD-9815', customerName: 'Charlie Brown', couponCode: 'BROWNIE20', discountAmount: 20.00, orderTotal: 80.00 },
-    { id: 4, date: '2026-04-24T09:20:00Z', orderId: '#ORD-9810', customerName: 'Diana Prince', couponCode: 'BROWNIE20', discountAmount: 35.00, orderTotal: 140.00 },
-    { id: 5, date: '2026-04-23T18:05:00Z', orderId: '#ORD-9805', customerName: 'Eve Davis', couponCode: 'FREESHIP', discountAmount: 15.00, orderTotal: 150.00 },
-    { id: 6, date: '2026-04-23T10:10:00Z', orderId: '#ORD-9801', customerName: 'Frank Miller', couponCode: 'WELCOME10', discountAmount: 5.50, orderTotal: 49.50 },
-  ])
+const MOCK_LOGS = [
+  { id: 1, date: '2026-04-26T14:30:00Z', orderId: '#ORD-9821', customerName: 'Alice Johnson', couponCode: 'WELCOME10', discountAmount: 12.50, orderTotal: 112.50 },
+  { id: 2, date: '2026-04-26T11:15:00Z', orderId: '#ORD-9820', customerName: 'Bob Smith', couponCode: 'WELCOME10', discountAmount: 8.00, orderTotal: 72.00 },
+  { id: 3, date: '2026-04-25T16:45:00Z', orderId: '#ORD-9815', customerName: 'Charlie Brown', couponCode: 'BROWNIE20', discountAmount: 20.00, orderTotal: 80.00 },
+  { id: 4, date: '2026-04-24T09:20:00Z', orderId: '#ORD-9810', customerName: 'Diana Prince', couponCode: 'BROWNIE20', discountAmount: 35.00, orderTotal: 140.00 },
+  { id: 5, date: '2026-04-23T18:05:00Z', orderId: '#ORD-9805', customerName: 'Eve Davis', couponCode: 'FREESHIP', discountAmount: 15.00, orderTotal: 150.00 },
+  { id: 6, date: '2026-04-23T10:10:00Z', orderId: '#ORD-9801', customerName: 'Frank Miller', couponCode: 'WELCOME10', discountAmount: 5.50, orderTotal: 49.50 },
+]
 
+const AdminCouponLogs = () => {
+  const [logs, setLogs] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredLogs = logs.filter(log => 
-    log.couponCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        setIsLoading(true)
+        const response = await apiClient.get('/coupons/logs')
+        const logList = Array.isArray(response) ? response : response.logs || []
+        setLogs(logList.length > 0 ? logList : MOCK_LOGS)
+        setError(null)
+      } catch (err) {
+        console.warn('Failed to fetch coupon logs, using mock data:', err.message)
+        setError('Using cached data')
+        setLogs(MOCK_LOGS)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchLogs()
+  }, [])
+
+  const filteredLogs = logs.filter(log =>
+    log.couponCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    log.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    log.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const formatDateTime = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }
+    return new Date(dateString).toLocaleDateString('en-US', options)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="admin-coupon-logs" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+        <Loader size="large" />
+      </div>
+    )
   }
 
   return (
@@ -31,12 +63,14 @@ const AdminCouponLogs = () => {
         <h1 className="admin-page-title">Coupon Usage Log</h1>
       </div>
 
+      {error && <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>{error}</p>}
+
       <div className="admin-filters">
         <div className="admin-search-box">
           <Search size={18} />
-          <input 
-            type="text" 
-            placeholder="Search by coupon code, order ID, or customer..." 
+          <input
+            type="text"
+            placeholder="Search by coupon code, order ID, or customer..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

@@ -67,9 +67,11 @@
   .admin-filters {
     flex-direction: column;
   }
+  
   .admin-search-box {
     max-width: 100%;
   }
+  
   .admin-form-row {
     grid-template-columns: 1fr;
   }

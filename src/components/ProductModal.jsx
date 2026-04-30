@@ -1,9 +1,22 @@
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Star, ShoppingBag } from 'lucide-react'
+import { useCartStore } from '../stores/useCartStore.js'
 
-const ProductModal = ({ isOpen, onClose, product, onAddToCart }) => {
+const ProductModal = ({ isOpen, onClose, product }) => {
+  const addItem = useCartStore((state) => state.addItem)
+
   if (!product) return null
+
+  const handleAddToCart = async () => {
+    try {
+      // Add product to cart (handles both local storage for guests and API for logged-in users)
+      await addItem(product, 1)
+      onClose()
+    } catch (error) {
+      console.error('Failed to add item to cart:', error)
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -39,8 +52,8 @@ const ProductModal = ({ isOpen, onClose, product, onAddToCart }) => {
               overflow: 'hidden'
             }}
           >
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               style={{
                 position: 'absolute',
                 top: '1rem',
@@ -56,27 +69,27 @@ const ProductModal = ({ isOpen, onClose, product, onAddToCart }) => {
             </button>
 
             <div className="modal-image-container">
-              <img 
-                src={product.img} 
-                alt={product.name} 
+              <img
+                src={product.image || product.img || (product.images && product.images[0]) || '/placeholder-product.jpg'}
+                alt={product.name}
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
                   borderRadius: 'var(--radius-md)'
-                }} 
+                }}
               />
             </div>
 
             <div className="modal-info" style={{ padding: '2rem 1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <span style={{ 
-                  background: 'var(--pink-accent)', 
-                  color: 'var(--brown-primary)', 
-                  padding: '0.3rem 0.8rem', 
-                  borderRadius: '20px', 
-                  fontSize: '0.8rem', 
-                  fontWeight: '700' 
+                <span style={{
+                  background: 'var(--pink-accent)',
+                  color: 'var(--brown-primary)',
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: '700'
                 }}>
                   Premium Choice
                 </span>
@@ -86,8 +99,10 @@ const ProductModal = ({ isOpen, onClose, product, onAddToCart }) => {
               </div>
 
               <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{product.name}</h2>
-              <p style={{ color: 'var(--brown-secondary)', fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>{product.price}</p>
-              
+              <p style={{ color: 'var(--brown-secondary)', fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>
+                ₹{product.price}
+              </p>
+
               <div style={{ marginBottom: '2rem' }}>
                 <h4 style={{ marginBottom: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>Description</h4>
                 <p style={{ color: 'var(--text-muted)', lineHeight: '1.8' }}>
@@ -106,12 +121,9 @@ const ProductModal = ({ isOpen, onClose, product, onAddToCart }) => {
                 </div>
               </div>
 
-              <button 
-                className="btn-primary" 
-                onClick={() => {
-                  onAddToCart()
-                  onClose()
-                }}
+              <button
+                className="btn-primary"
+                onClick={handleAddToCart}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', padding: '1.2rem' }}
               >
                 <ShoppingBag size={20} /> Add to Cart

@@ -19,10 +19,6 @@
 .order-id {
   font-weight: 700;
   color: var(--brown-primary);
-  background: linear-gradient(135deg, var(--pink-accent) 0%, #ffd4d0 100%);
-  padding: 0.4rem 0.8rem;
-  border-radius: 10px;
-  display: inline-block;
 }
 
 .order-customer {

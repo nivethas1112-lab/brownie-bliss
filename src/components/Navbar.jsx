@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDown, ChevronRight, Menu, X, ShoppingBag } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useCartStore } from '../stores/useCartStore.js'
 import './Navbar.css'
 
 const Navbar = ({ onCartClick }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [scrolled, setScrolled] = useState(false)
+
+  // Get cart item count from global store
+  const totalItems = useCartStore((state) => state.totalItems)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,22 +50,22 @@ const Navbar = ({ onCartClick }) => {
 
         <div className="nav-right desktop-menu">
           <Link to="/" className="nav-link">Home</Link>
-          
+
           <div className="nav-item dropdown">
-            <button 
-              className="nav-link dropdown-toggle" 
+            <button
+              className="nav-link dropdown-toggle"
               onClick={() => setActiveDropdown(activeDropdown === 'main' ? null : 'main')}
               onMouseEnter={() => setActiveDropdown('main')}
             >
               Categories <ChevronDown size={16} />
             </button>
-            <div 
+            <div
               className="dropdown-menu"
               onMouseLeave={() => setActiveDropdown(null)}
               style={{ display: activeDropdown === 'main' ? 'flex' : 'none' }}
             >
               {categoryGroups.map((group) => (
-                <div 
+                <div
                   key={group.name}
                   className="dropdown-group"
                   onMouseEnter={() => group.items && setActiveDropdown(group.name)}
@@ -71,7 +75,7 @@ const Navbar = ({ onCartClick }) => {
                       <div className="dropdown-parent">
                         {group.name} <ChevronRight size={14} />
                       </div>
-                      <div 
+                      <div
                         className="dropdown-submenu"
                         style={{ display: activeDropdown === group.name ? 'flex' : 'none' }}
                       >
@@ -87,7 +91,7 @@ const Navbar = ({ onCartClick }) => {
                       </div>
                     </>
                   ) : (
-                    <Link 
+                    <Link
                       to={`/category/${group.name.toLowerCase().replace(' ', '-')}`}
                       className="dropdown-parent"
                     >
@@ -101,9 +105,10 @@ const Navbar = ({ onCartClick }) => {
 
           <Link to="/about" className="nav-link">About Us</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
+          <Link to="/admin/login" className="nav-link admin-link">Admin Login</Link>
           <button className="nav-link cart-btn" onClick={onCartClick}>
             <ShoppingBag size={20} />
-            <span className="cart-count">3</span>
+            <span className="cart-count">{totalItems}</span>
           </button>
         </div>
 
@@ -115,7 +120,7 @@ const Navbar = ({ onCartClick }) => {
       {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -152,6 +157,7 @@ const Navbar = ({ onCartClick }) => {
             </div>
             <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
             <Link to="/contact" onClick={() => setIsOpen(false)}>Contact</Link>
+            <Link to="/admin/login" onClick={() => setIsOpen(false)}>Admin Login</Link>
           </motion.div>
         )}
       </AnimatePresence>

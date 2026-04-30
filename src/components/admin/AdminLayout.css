@@ -261,10 +261,12 @@
 }
 
 .admin-main {
-  flex: 1;
+  flex: 0 0 calc(100% - 280px);
+  width: calc(100% - 280px);
   margin-left: 280px;
   padding: 2rem 2.5rem;
   min-height: 100vh;
+  overflow-x: auto;
 }
 
 .admin-page-header {
@@ -283,14 +285,6 @@
   font-size: 2rem;
   color: var(--brown-primary);
   position: relative;
-}
-
-.admin-page-title::after {
-  content: '✨';
-  position: absolute;
-  right: -30px;
-  top: -5px;
-  font-size: 1rem;
 }
 
 .admin-stats-grid {
@@ -346,14 +340,15 @@
   background: linear-gradient(135deg, #ffffff 0%, #fff9f9 100%);
   border-radius: 24px;
   box-shadow: 0 8px 25px rgba(75, 46, 46, 0.08);
-  overflow: hidden;
+  overflow-x: auto;
   border: 1px solid rgba(255, 228, 225, 0.5);
+  width: 100%;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px;
+  min-width: 600px;
 }
 
 .admin-table th,
@@ -606,6 +601,8 @@
   
   .admin-main {
     margin-left: 0;
+    width: 100%;
+    flex: 1 1 auto;
     padding: 1.5rem;
   }
 
@@ -618,4 +615,71 @@
   .admin-stats-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Toast Notification Styles */
+.admin-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(75, 46, 46, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  z-index: 2000;
+  animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border: 1px solid rgba(255, 228, 225, 0.5);
+  min-width: 300px;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.admin-toast.success .toast-content {
+  color: #15803d;
+}
+
+.admin-toast.error .toast-content {
+  color: #b91c1c;
+}
+
+.admin-toast.success {
+  border-left: 5px solid #22c55e;
+}
+
+.admin-toast.error {
+  border-left: 5px solid #ef4444;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.toast-close:hover {
+  background: rgba(0,0,0,0.05);
+  color: var(--brown-primary);
 }

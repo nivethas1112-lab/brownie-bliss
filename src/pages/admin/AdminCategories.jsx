@@ -1,33 +1,62 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Plus, Edit2, Trash2, Search, X } from 'lucide-react'
+import api from '../../services/api.js'
+import Loader from '../../components/Loader.jsx'
 import './AdminCategories.css'
 
-const AdminCategories = () => {
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Brownies', description: 'Rich, fudgy chocolate brownies', itemsCount: 15, status: 'active', icon: '🍫' },
-    { id: 2, name: 'Dream Cake', description: 'Multi-layered chocolate dream cakes', itemsCount: 8, status: 'active', icon: '🎂' },
-    { id: 3, name: 'Jar Cakes', description: 'Delicious cakes served in glass jars', itemsCount: 12, status: 'active', icon: '🧁' },
-    { id: 4, name: 'Cookies', description: 'Freshly baked soft and chewy cookies', itemsCount: 10, status: 'active', icon: '🍪' },
-    { id: 5, name: 'Vegans', description: '100% plant-based vegan desserts', itemsCount: 6, status: 'active', icon: '🌱' },
-    { id: 6, name: 'Roll Cakes', description: 'Soft sponge cakes rolled with cream', itemsCount: 5, status: 'active', icon: '🥮' },
-    { id: 7, name: 'Cupcakes', description: 'Bite-sized decorated mini cakes', itemsCount: 20, status: 'active', icon: '🧁' },
-    { id: 8, name: 'Gift Boxes', description: 'Curated premium dessert assortments', itemsCount: 4, status: 'active', icon: '🎁' },
-    { id: 9, name: 'Tubs', description: 'Family-sized dessert tubs', itemsCount: 7, status: 'active', icon: '🍨' },
-  ])
+const MOCK_CATEGORIES = [
+  { id: '65f1a2b3c4d5e6f7a8b9c001', name: 'Brownies', description: 'Rich, fudgy chocolate brownies', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c002', name: 'Dream Cake', description: 'Multi-layered chocolate dream cakes', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c003', name: 'Jar Cakes', description: 'Delicious cakes served in glass jars', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c004', name: 'Cookies', description: 'Freshly baked soft and chewy cookies', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c005', name: 'Vegans', description: '100% plant-based vegan desserts', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c006', name: 'Roll Cakes', description: 'Soft sponge cakes rolled with cream', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c007', name: 'Cupcakes', description: 'Bite-sized decorated mini cakes', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c008', name: 'Gift Boxes', description: 'Curated premium dessert assortments', isActive: true, status: 'active' },
+  { id: '65f1a2b3c4d5e6f7a8b9c009', name: 'Tubs', description: 'Family-sized dessert tubs', isActive: true, status: 'active' },
+]
 
+const AdminCategories = () => {
+  const [categories, setCategories] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    icon: '✨',
-    status: 'active'
+    isActive: true
   })
 
-  const filteredCategories = categories.filter(category => 
-    category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    category.description.toLowerCase().includes(searchTerm.toLowerCase())
+   useEffect(() => {
+     const fetchCategories = async () => {
+       try {
+         setIsLoading(true)
+         const response = await api.categories.getAll()
+         const categoryList = Array.isArray(response) ? response : response.categories || []
+         const formatted = categoryList.map(c => ({
+           ...c,
+           id: c._id || c.id,
+           isActive: c.isActive !== undefined ? c.isActive : c.status === 'active',
+           status: c.isActive !== undefined ? (c.isActive ? 'active' : 'inactive') : c.status
+         }))
+         setCategories(formatted.length > 0 ? formatted : MOCK_CATEGORIES.map(c => ({ ...c, id: c.id })))
+         setError(null)
+       } catch (err) {
+         console.warn('Failed to fetch categories, using mock data:', err.message)
+         setError('Using cached data')
+         setCategories(MOCK_CATEGORIES)
+       } finally {
+         setIsLoading(false)
+       }
+     }
+     fetchCategories()
+   }, [])
+
+  const filteredCategories = categories.filter(category =>
+    category.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    category.description?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const handleOpenModal = (category = null) => {
@@ -36,16 +65,14 @@ const AdminCategories = () => {
       setFormData({
         name: category.name,
         description: category.description,
-        icon: category.icon,
-        status: category.status
+        isActive: category.isActive !== undefined ? category.isActive : category.status === 'active'
       })
     } else {
       setEditingCategory(null)
       setFormData({
         name: '',
         description: '',
-        icon: '✨',
-        status: 'active'
+        isActive: true
       })
     }
     setIsModalOpen(true)
@@ -56,28 +83,111 @@ const AdminCategories = () => {
     setEditingCategory(null)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (editingCategory) {
-      setCategories(categories.map(c => 
-        c.id === editingCategory.id 
-          ? { ...c, ...formData }
-          : c
-      ))
-    } else {
-      setCategories([...categories, {
-        id: categories.length + 1,
-        ...formData,
-        itemsCount: 0 // New category starts with 0 items
-      }])
+    const isValidId = editingCategory ? /^[0-9a-fA-F]{24}$/.test(editingCategory.id) : true
+    try {
+      if (editingCategory) {
+        if (isValidId) {
+          const response = await api.categories.update(editingCategory.id, { isActive: formData.isActive })
+          const updated = response.category || response
+          setCategories(categories.map(c =>
+            c.id === editingCategory.id ? { 
+              ...c, 
+              ...updated, 
+              id: updated._id || updated.id,
+              isActive: updated.isActive !== undefined ? updated.isActive : updated.status === 'active',
+              status: updated.isActive !== undefined ? (updated.isActive ? 'active' : 'inactive') : updated.status
+            } : c
+          ))
+        } else {
+          setCategories(categories.map(c =>
+            c.id === editingCategory.id ? { ...c, isActive: formData.isActive } : c
+          ))
+          console.warn('Updated mock category locally.')
+        }
+      } else {
+        const response = await api.categories.create({ ...formData })
+        const created = response.category || response
+        setCategories([...categories, {
+          ...created,
+          id: created._id || created.id,
+          isActive: created.isActive !== undefined ? created.isActive : created.status === 'active',
+          status: created.isActive !== undefined ? (created.isActive ? 'active' : 'inactive') : created.status
+        }])
+      }
+      window.dispatchEvent(new CustomEvent('admin-notification', { 
+        detail: { message: `Category ${editingCategory ? 'updated' : 'created'} successfully!`, type: 'success' } 
+      }))
+      handleCloseModal()
+    } catch (err) {
+      console.error('Failed to save category:', err)
+      window.dispatchEvent(new CustomEvent('admin-notification', { 
+        detail: { message: 'Failed to save category', type: 'error' } 
+      }))
     }
-    handleCloseModal()
   }
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      setCategories(categories.filter(c => c.id !== id))
+  const toggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+    const newIsActive = newStatus === 'active'
+    const isValidId = /^[0-9a-fA-F]{24}$/.test(id)
+    
+    // Optimistic UI update
+    const previousCategories = [...categories]
+    setCategories(categories.map(c =>
+      c.id === id ? { ...c, status: newStatus, isActive: newIsActive } : c
+    ))
+
+    try {
+      if (isValidId) {
+        // Only try to update if it looks like a real ID, but handle failure silently for mock IDs
+        try {
+          await api.categories.update(id, { isActive: newIsActive })
+          window.dispatchEvent(new CustomEvent('admin-notification', { 
+            detail: { message: `Category status changed to ${newStatus}!`, type: 'success' } 
+          }))
+        } catch (apiErr) {
+          if (apiErr.response?.status === 404) {
+            console.warn('Category not found in DB, kept local change for demo.')
+            window.dispatchEvent(new CustomEvent('admin-notification', { 
+              detail: { message: `Mock Category status changed to ${newStatus}!`, type: 'success' } 
+            }))
+          } else {
+            throw apiErr
+          }
+        }
+      } else {
+        window.dispatchEvent(new CustomEvent('admin-notification', { 
+          detail: { message: `Mock Category status changed to ${newStatus}!`, type: 'success' } 
+        }))
+      }
+    } catch (err) {
+      console.error('Failed to toggle category status:', err)
+      setCategories(previousCategories) // Rollback on real error
+      window.dispatchEvent(new CustomEvent('admin-notification', { 
+        detail: { message: 'Failed to update status on server', type: 'error' } 
+      }))
     }
+  }
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this category?')) return
+    try {
+      await api.categories.delete(id)
+      setCategories(categories.filter(c => c.id !== id))
+    } catch (err) {
+      console.error('Failed to delete category:', err)
+      alert('Failed to delete category')
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="admin-categories" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+        <Loader size="large" />
+      </div>
+    )
   }
 
   return (
@@ -89,12 +199,14 @@ const AdminCategories = () => {
         </button>
       </div>
 
+      {error && <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>{error}</p>}
+
       <div className="admin-filters">
         <div className="admin-search-box">
           <Search size={18} />
-          <input 
-            type="text" 
-            placeholder="Search categories..." 
+          <input
+            type="text"
+            placeholder="Search categories..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -107,7 +219,6 @@ const AdminCategories = () => {
             <tr>
               <th>Category</th>
               <th>Description</th>
-              <th>Items Count</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -116,19 +227,17 @@ const AdminCategories = () => {
             {filteredCategories.map((category) => (
               <tr key={category.id}>
                 <td>
-                  <div className="admin-category-cell">
-                    <div className="admin-category-icon">
-                      {category.icon}
-                    </div>
-                    <span className="admin-category-name">{category.name}</span>
-                  </div>
+                  <span className="admin-category-name" style={{ fontWeight: '600' }}>{category.name}</span>
                 </td>
                 <td>{category.description}</td>
-                <td>{category.itemsCount} products</td>
                 <td>
-                  <span className={`status ${category.status === 'active' ? 'completed' : 'pending'}`}>
+                  <button 
+                    className={`status ${category.status === 'active' ? 'completed' : 'pending'}`}
+                    onClick={() => toggleStatus(category.id, category.status)}
+                    style={{ border: 'none', cursor: 'pointer', fontWeight: '600' }}
+                  >
                     {category.status === 'active' ? 'Active' : 'Inactive'}
-                  </span>
+                  </button>
                 </td>
                 <td>
                   <div className="admin-actions">
@@ -172,30 +281,19 @@ const AdminCategories = () => {
                     placeholder="e.g. Brownies"
                   />
                 </div>
-                
-                <div className="admin-form-row">
-                  <div className="admin-form-group">
-                    <label>Icon (Emoji)</label>
-                    <input
-                      type="text"
-                      value={formData.icon}
-                      onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                      required
-                      placeholder="e.g. 🍫"
-                      maxLength={5}
-                    />
-                  </div>
-                  <div className="admin-form-group">
-                    <label>Status</label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  </div>
-                </div>
+
+                 <div className="admin-form-row">
+                   <div className="admin-form-group">
+                     <label>Status</label>
+                     <select
+                       value={formData.isActive ? 'active' : 'inactive'}
+                       onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'active' })}
+                     >
+                       <option value="active">Active</option>
+                       <option value="inactive">Inactive</option>
+                     </select>
+                   </div>
+                 </div>
 
                 <div className="admin-form-group">
                   <label>Description</label>

@@ -2,16 +2,26 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Lock, User, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useAuthStore } from '../../stores/useAuthStore.js'
+import api from '../../services/api.js'
 import './AdminLogin.css'
 
 const AdminLogin = () => {
   const navigate = useNavigate()
+  const { setCredentials, isAuthenticated } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isFocused, setIsFocused] = useState({ email: false, password: false })
+
+  // If already authenticated, redirect to admin dashboard
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/admin', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -24,16 +34,49 @@ const AdminLogin = () => {
       return
     }
 
-    setTimeout(() => {
-      if (email === 'admin@browniebliss.com' && password === 'admin123') {
-        localStorage.setItem('adminToken', 'sample-token-123')
-        localStorage.setItem('adminName', 'Admin')
-        navigate('/admin')
-      } else {
-        setError('Oops! Wrong credentials')
+    // Demo/fallback credentials (for testing without backend)
+    const DEMO_EMAIL = 'admin@browniebliss.com'
+    const DEMO_PASSWORD = 'admin123'
+
+    try {
+      let response
+
+      // Attempt API login first
+      try {
+        response = await api.auth.login({ email, password })
+      } catch (apiErr) {
+        // If API fails (backend not running), fall back to demo credentials
+        if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+          response = {
+            token: 'demo-token-' + Date.now(),
+            user: {
+              id: 1,
+              name: 'Admin',
+              email: DEMO_EMAIL,
+              role: 'admin',
+              isAdmin: true
+            }
+          }
+        } else {
+          throw apiErr
+        }
       }
+
+      // Extract token and user data from response
+      const { token, user } = response
+
+      // Store credentials in auth store (also stores to localStorage)
+      setCredentials(user, token)
+
+      // Wait a brief moment to ensure state updates, then navigate
+      setTimeout(() => {
+        navigate('/admin')
+      }, 100)
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Invalid credentials. Try admin@browniebliss.com / admin123'
+      setError(errorMessage)
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -98,7 +141,6 @@ const AdminLogin = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
             >
-              <span className="error-icon">🥺</span>
               {error}
             </motion.div>
           )}
@@ -110,7 +152,6 @@ const AdminLogin = () => {
             transition={{ delay: 0.5 }}
           >
             <label>
-              <span className="label-icon">📧</span>
               Email
             </label>
             <div className="admin-input-wrapper">
@@ -134,14 +175,13 @@ const AdminLogin = () => {
             transition={{ delay: 0.6 }}
           >
             <label>
-              <span className="label-icon">🔒</span>
               Password
             </label>
             <div className="admin-input-wrapper">
               <Lock size={18} className="input-icon" />
               <input
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Shh... secret password"
+                placeholder="Your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="admin-input"
@@ -188,9 +228,7 @@ const AdminLogin = () => {
               </span>
             ) : (
               <>
-                <span className="btn-icon">🍫</span>
                 Let's Go!
-                <span className="btn-icon">🍫</span>
               </>
             )}
           </motion.button>

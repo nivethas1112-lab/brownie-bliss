@@ -77,10 +77,26 @@
 .customer-spent {
   font-weight: 700;
   color: var(--brown-primary);
-  background: linear-gradient(135deg, var(--pink-accent) 0%, #ffd4d0 100%);
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
 }
+
+.customer-action-status-select {
+  min-width: 96px;
+  height: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 0 0.5rem;
+  background: #fff;
+  color: var(--text-dark);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.customer-action-status-select:focus {
+  outline: none;
+  border-color: var(--pink-accent);
+  box-shadow: 0 0 0 2px rgba(255, 192, 203, 0.35);
+}
+
 
 @media (max-width: 992px) {
   .admin-table th:nth-child(3),
@@ -100,8 +116,8 @@
   
   .admin-table th:nth-child(4),
   .admin-table td:nth-child(4),
-  .admin-table th:nth-child(6),
-  .admin-table td:nth-child(6) {
+  .admin-table th:nth-child(7),
+  .admin-table td:nth-child(7) {
     display: none;
   }
 }
