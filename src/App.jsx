@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import CategoryPage from './pages/CategoryPage'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import Checkout from './pages/Checkout'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import Loader from './components/Loader'
@@ -66,6 +67,7 @@ function AppContent() {
           <Route path="/category/:type" element={<CategoryPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin/login" element={<AdminLogin />} />
 
           <Route

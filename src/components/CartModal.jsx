@@ -1,10 +1,12 @@
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ShoppingBag, Trash2, Plus, Minus, ShoppingCart } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useCartStore } from '../stores/useCartStore.js'
 import Loader from './Loader.jsx'
 
 const CartModal = ({ isOpen, onClose }) => {
+  const navigate = useNavigate()
   const { items, isLoading, subtotal, updateItem, removeItem } = useCartStore();
 
   const handleUpdateQuantity = async (itemId, newQuantity) => {
@@ -135,14 +137,12 @@ const CartModal = ({ isOpen, onClose }) => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--pink-bg)', padding: '0.3rem 0.6rem', borderRadius: '20px' }}>
                           <button
                             onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                            disabled={isLoading}
                           >
                             <Minus size={14} />
                           </button>
                           <span style={{ fontWeight: '600' }}>{item.quantity}</span>
                           <button
                             onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                            disabled={isLoading}
                           >
                             <Plus size={14} />
                           </button>
@@ -150,7 +150,6 @@ const CartModal = ({ isOpen, onClose }) => {
                         <button
                           onClick={() => handleRemoveItem(item.id)}
                           style={{ color: 'var(--text-muted)' }}
-                          disabled={isLoading}
                         >
                           <Trash2 size={16} />
                         </button>
@@ -167,7 +166,14 @@ const CartModal = ({ isOpen, onClose }) => {
                   <span>Total</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
-                <button className="btn-primary" style={{ width: '100%', padding: '1.2rem' }}>
+                <button
+                  className="btn-primary"
+                  style={{ width: '100%', padding: '1.2rem' }}
+                  onClick={() => {
+                    onClose()
+                    navigate('/checkout')
+                  }}
+                >
                   Checkout Now
                 </button>
                 <button

@@ -116,10 +116,20 @@ export const useCartStore = create(
           return;
         }
 
+        // Temp items exist only locally; skip server sync to avoid reverting.
+        if (String(itemId).startsWith('temp-')) {
+          return;
+        }
+
         set({ isLoading: true, error: null });
         try {
           const data = await api.cart.updateItem(itemId, quantity);
           const rawItems = data.cart?.items || data.items || [];
+          if (!Array.isArray(rawItems) || rawItems.length === 0) {
+            // Keep optimistic quantity if backend returns empty/invalid payload.
+            set({ isLoading: false });
+            return;
+          }
           const items = rawItems.map(item => ({
             id: item._id,
             productId: item.product?._id || item.product?.id,
@@ -142,9 +152,8 @@ export const useCartStore = create(
             return;
           }
 
-          // Roll back only on real server-side validation/conflict errors.
-          set({ items: previousItems, error: error.message, isLoading: false });
-          get().updateTotals();
+          // Keep optimistic quantity to prevent UI jumping back.
+          set({ error: error.message, isLoading: false });
         }
       },
 
